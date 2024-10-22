@@ -5,26 +5,25 @@ sidebar: false
 
 # Education
 
--   B.S., Industrial Engineering, Hacettepe University, Turkey, 20xx - ongoing.
+-   B.S., Industrial Engineering, Hacettepe University, Turkey, 2021 - ongoing.
 
 # Work Experience
 
 ## Employements
 
-1.  Firm xxx, position xx, year xxx
-
-2.  Firm yyy, position yyy, year yyy
+Turkish Aerospace Industries, Candidate Engineer, November 2024 - May 2025
 
 ## Internships
 
-1.  Firm aaa, position xx, year xxx
-
-2.  Firm bbb, position yyy, year yyy
+\-
 
 # Projects
 
+Teknofest 2024 , Technological applications in psychology, Our project "Psikonavi" was one of the 32 teams that made it to the finals out of 3485 teams, and I served as the project manager for this project.
+
 # Competencies
 
-R, Quarto, Git, Python
+R, Quarto, Git, Python, Power BI, Excel, AutoCAD, Flutter
 
 # Hobbies
+Indoor Running
