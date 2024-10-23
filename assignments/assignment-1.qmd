@@ -28,19 +28,21 @@ Discussions often focus on demand forecasting and AI. Relying on a single foreca
 
 *Answer: You are applying for a loan. The bank checks whether you are reliable and if you will pay your debt on time. It calculates a score for this, and based on that score, your mortgage decision is determined. (Mortgage Application -\> Applicant???s Loan Score Estimation -\> Mortgage Decision)*
 
-2.   Which pairing could be wrong?
+2.  Which pairing could be wrong?
 
-    a\) Descriptive Analytics \<- Data Mining
+```         
+a\) Descriptive Analytics \<- Data Mining
 
-    b\) Predictive Analytics \<- Simulation
+b\) Predictive Analytics \<- Simulation
 
-    c\) Diagnostic Analytics \<- Time Series Analysis
+c\) Diagnostic Analytics \<- Time Series Analysis
 
-    d\) Prescriptive Analytics \<- Optimization
+d\) Prescriptive Analytics \<- Optimization
 
-    e\) Predictive Analytics \<- Regression
+e\) Predictive Analytics \<- Regression
 
-    *Answer: c*
+*Answer: c*
+```
 
 ## (b)
 
