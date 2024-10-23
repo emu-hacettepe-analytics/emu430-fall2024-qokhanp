@@ -3,8 +3,8 @@ title: "Welcome to My Analytics Lab"
 sidebar: false 
 ---
 
-Hello, I’m Gökhan Polat,
+Hello, I???m Gokhan Polat,
 
-an Industrial Engineering student with a passion for data analytics, sustainable development, and technology-driven solutions. On this website, I’ll be sharing my latest projects, insights into data analysis, and much more.
+an Industrial Engineering student with a passion for data analytics, sustainable development, and technology-driven solutions. On this website, I???ll be sharing my latest projects, insights into data analysis, and much more.
 
 Feel free to connect and follow along!
