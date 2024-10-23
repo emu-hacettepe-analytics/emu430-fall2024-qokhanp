@@ -24,6 +24,8 @@ Mathematical modeling and programming skills are critical in these areas. Python
 
 Discussions often focus on demand forecasting and AI. Relying on a single forecast can be misleading, requiring deeper research into aspects like price elasticity. There's an ongoing debate about AI's role in future analytics and decision-making.
 
+***Questions:***
+
 1\. **Give an specific daily life example of the Descriptive --\> Predictive --\> Prescriptive process.**
 
 *Answer: You are applying for a loan. The bank checks whether you are reliable and if you will pay your debt on time. It calculates a score for this, and based on that score, your mortgage decision is determined. (Mortgage Application -\> Applicant???s Loan Score Estimation -\> Mortgage Decision)*
