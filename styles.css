@@ -1,1 +1,237 @@
-/* css styles */
+/* Modern Dark Theme Styles */
+:root {
+  --bg-primary: #1a1b1e;
+  --bg-secondary: #2c2e33;
+  --text-primary: #e2e2e3;
+  --text-secondary: #a1a1a1;
+  --accent-color: #5c7cfa;
+  --accent-hover: #748ffc;
+  --border-color: #2c2e33;
+  --success-color: #40c057;
+  --warning-color: #fab005;
+  --danger-color: #fa5252;
+}
+
+/* Global Styles */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Navigation */
+.navbar {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--text-primary) !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--text-secondary) !important;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--accent-color) !important;
+}
+
+/* Sidebar */
+#quarto-sidebar {
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+}
+
+.sidebar-navigation .nav-link {
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.sidebar-navigation .nav-link:hover {
+  background-color: rgba(92, 124, 250, 0.1);
+  color: var(--accent-color) !important;
+}
+
+/* Content Area */
+.content {
+  padding: 2rem;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: none;
+}
+
+/* Table of Contents */
+#toc-sidebar {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.toc-active {
+  color: var(--accent-color) !important;
+  font-weight: 500;
+}
+
+/* Code Blocks */
+pre {
+  background-color: var(--bg-secondary) !important;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+code {
+  color: var(--accent-color) !important;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: rgba(92, 124, 250, 0.1);
+  font-weight: 600;
+}
+
+/* Cards */
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+}
+
+/* Back to Top Button */
+.back-to-top {
+  background-color: var(--accent-color);
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.back-to-top:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Alerts and Messages */
+.alert {
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.alert-info {
+  background-color: rgba(92, 124, 250, 0.1);
+  color: var(--accent-color);
+}
+
+.alert-success {
+  background-color: rgba(64, 192, 87, 0.1);
+  color: var(--success-color);
+}
+
+.alert-warning {
+  background-color: rgba(250, 176, 5, 0.1);
+  color: var(--warning-color);
+}
+
+.alert-danger {
+  background-color: rgba(250, 82, 82, 0.1);
+  color: var(--danger-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  .content {
+    padding: 1rem;
+  }
+  
+  #quarto-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+}

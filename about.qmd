@@ -3,6 +3,8 @@ title: "About Me"
 sidebar: false 
 ---
 
+[PDF Download](docs/GokhanPolatCV.pdf)
+
 # Education
 
 -   B.S., Industrial Engineering, Hacettepe University, Turkey, 2021 - ongoing.

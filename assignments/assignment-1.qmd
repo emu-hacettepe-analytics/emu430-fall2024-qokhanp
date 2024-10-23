@@ -14,17 +14,74 @@ My first assignment has two parts.
 
 ## (b)
 
+First, we are loading the dslabs library and pulling the *polls_us_election_2016* dataset from it.
+
+*install.packages("dslabs")*
+
 ```{r}
-install.packages("dslabs")
 library(dslabs)
-data("polls_us_election_2016")
+data(polls_us_election_2016)
 ```
+
+The command **head(polls_us_election_2016, 10)** was used to display the first 10 rows of the dataset.
 
 ```{r}
 head(polls_us_election_2016, 10)
 ```
 
+The number of NA values in my dataset was displayed, and this count was printed.
+
 ```{r}
 total_na <- sum(is.na(polls_us_election_2016))
 print(total_na)
+```
+
+I assigned my name and birth year to a variable. To avoid altering my original dataset, I also assigned it to another variable. I determined the types of the columns using the *sapply* function. Since I planned to replace the factor columns with my name, I created a *replace_na_in_factor* function to prevent issues. I then iterated over each column using a for loop and replaced the NA values with my birth year and name. While doing this, I used *if* and *if else* statements to check whether the columns were numeric, character, or factor.
+
+```{r}
+birth_year <- 2002  # My birth year
+first_name <- "Gokhan"  # My name
+
+# I Create a copy of the original dataset
+na_removed_data <- polls_us_election_2016
+
+# Get column names and their types
+col_types <- sapply(na_removed_data, class)
+
+# Function to handle factors specifically
+replace_na_in_factor <- function(x, replacement) {
+  if (is.factor(x)) {
+    # Convert factor to character, replace NAs, then back to factor
+    levels_with_name <- c(levels(x), replacement)
+    x <- factor(replace(as.character(x), is.na(x), replacement),
+                levels = levels_with_name)
+  }
+  return(x)
+}
+
+# Loop through each column and replace NAs based on type
+for (col in names(na_removed_data)) {
+  if (is.numeric(na_removed_data[[col]])) {
+    # Replace NAs in numeric columns with birth year
+    na_removed_data[[col]][is.na(na_removed_data[[col]])] <- birth_year
+  } else if (is.character(na_removed_data[[col]])) {
+    # Replace NAs in character columns with first name
+    na_removed_data[[col]][is.na(na_removed_data[[col]])] <- first_name
+  } else if (is.factor(na_removed_data[[col]])) {
+    # Handle factor columns
+    na_removed_data[[col]] <- replace_na_in_factor(na_removed_data[[col]], first_name)
+  }
+}
+```
+
+I took a look at my new dataset.
+
+```{r}
+head(na_removed_data, 10)
+```
+
+I wanted to check how many NA values there are in my new dataset.
+
+```{r}
+print(new_total_number_na <- sum(is.na(na_removed_data)))
 ```
