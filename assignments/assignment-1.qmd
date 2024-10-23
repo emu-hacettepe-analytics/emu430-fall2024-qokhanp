@@ -12,6 +12,36 @@ My first assignment has two parts.
 
 ## (a)
 
+I watched the video with Baykal Hafizoglu was the guest.
+
+Data science and industrial engineering focus on merging analytical solutions with optimization models, like predicting daily inventory levels. There???s also an emphasis on various decision-making models and related software tools.
+
+Prototyping and user feedback are crucial, as a clean and user-friendly interface enhances project success. The prototyping phase creates a small version of the software before final development. Clear communication and user satisfaction are key to effective problem-solving.
+
+These fields stress the importance of analysis and optimization???like reducing inventory costs through optimization. However, some analytical models might introduce new challenges. Visual aids and KPI comparisons help clarify problems and solutions. A well-designed user interface is essential for effective communication.
+
+Mathematical modeling and programming skills are critical in these areas. Python is particularly valuable for practical problem-solving. Challenges in mathematical modeling might require more research, so learning specialized techniques is important.
+
+Discussions often focus on demand forecasting and AI. Relying on a single forecast can be misleading, requiring deeper research into aspects like price elasticity. There's an ongoing debate about AI's role in future analytics and decision-making.
+
+1.  **Give an specific daily life example of the Descriptive --\> Predictive --\> Prescriptive process.**
+
+*Answer: You are applying for a loan. The bank checks whether you are reliable and if you will pay your debt on time. It calculates a score for this, and based on that score, your mortgage decision is determined. (Mortgage Application -\> Applicant???s Loan Score Estimation -\> Mortgage Decision)*
+
+2.   Which pairing could be wrong?
+
+    a\) Descriptive Analytics \<- Data Mining
+
+    b\) Predictive Analytics \<- Simulation
+
+    c\) Diagnostic Analytics \<- Time Series Analysis
+
+    d\) Prescriptive Analytics \<- Optimization
+
+    e\) Predictive Analytics \<- Regression
+
+    *Answer: c*
+
 ## (b)
 
 First, we are loading the dslabs library and pulling the *polls_us_election_2016* dataset from it.
