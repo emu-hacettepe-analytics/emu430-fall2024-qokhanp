@@ -4,13 +4,7 @@ title: "Assignment 1"
 
 # Assignment 1
 
-```{r}
-1 + 1
-```
-
-My first assignment has two parts.
-
-## (a)
+# (a)
 
 [I watched the video with Baykal Hafizoglu was the guest.]{.underline}
 
@@ -74,13 +68,15 @@ I assigned my name and birth year to a variable. To avoid altering my original d
 birth_year <- 2002  # My birth year
 first_name <- "Gokhan"  # My name
 
-# I Create a copy of the original dataset
+# i created a copy of the original dataset
 na_removed_data <- polls_us_election_2016
 
 # Get column names and their types
 col_types <- sapply(na_removed_data, class)
 
-# Function to handle factors specifically
+# claude.ai helped me about that part
+# my prompt: "I cannot change some factor NA values in my data with my name. How can I do this?"
+
 replace_na_in_factor <- function(x, replacement) {
   if (is.factor(x)) {
     # Convert factor to character, replace NAs, then back to factor
@@ -91,16 +87,16 @@ replace_na_in_factor <- function(x, replacement) {
   return(x)
 }
 
-# Loop through each column and replace NAs based on type
+# looped through each column and replaced NAs based on type.
 for (col in names(na_removed_data)) {
   if (is.numeric(na_removed_data[[col]])) {
-    # Replace NAs in numeric columns with birth year
+    # Replaced NAs in numeric columns with birth year
     na_removed_data[[col]][is.na(na_removed_data[[col]])] <- birth_year
   } else if (is.character(na_removed_data[[col]])) {
-    # Replace NAs in character columns with first name
+    # Replaced NAs in character columns with first name
     na_removed_data[[col]][is.na(na_removed_data[[col]])] <- first_name
   } else if (is.factor(na_removed_data[[col]])) {
-    # Handle factor columns
+    # factor columns
     na_removed_data[[col]] <- replace_na_in_factor(na_removed_data[[col]], first_name)
   }
 }
