@@ -8,11 +8,11 @@ title: "Assignment 1"
 
 [I watched the video with Baykal Hafizoglu was the guest.]{.underline}
 
-Data science and industrial engineering focus on merging analytical solutions with optimization models, like predicting daily inventory levels. There???s also an emphasis on various decision-making models and related software tools.
+Data science and industrial engineering focus on merging analytical solutions with optimization models, like predicting daily inventory levels. There's also an emphasis on various decision-making models and related software tools.
 
 Prototyping and user feedback are crucial, as a clean and user-friendly interface enhances project success. The prototyping phase creates a small version of the software before final development. Clear communication and user satisfaction are key to effective problem-solving.
 
-These fields stress the importance of analysis and optimization???like reducing inventory costs through optimization. However, some analytical models might introduce new challenges. Visual aids and KPI comparisons help clarify problems and solutions. A well-designed user interface is essential for effective communication.
+These fields stress the importance of analysis and optimization like reducing inventory costs through optimization. However, some analytical models might introduce new challenges. Visual aids and KPI comparisons help clarify problems and solutions. A well-designed user interface is essential for effective communication.
 
 Mathematical modeling and programming skills are critical in these areas. Python is particularly valuable for practical problem-solving. Challenges in mathematical modeling might require more research, so learning specialized techniques is important.
 
@@ -22,7 +22,7 @@ Discussions often focus on demand forecasting and AI. Relying on a single foreca
 
 1\. **Give an specific daily life example of the Descriptive --\> Predictive --\> Prescriptive process.**
 
-*Answer: You are applying for a loan. The bank checks whether you are reliable and if you will pay your debt on time. It calculates a score for this, and based on that score, your mortgage decision is determined. (Mortgage Application -\> Applicant???s Loan Score Estimation -\> Mortgage Decision)*
+*Answer: You are applying for a loan. The bank checks whether you are reliable and if you will pay your debt on time. It calculates a score for this, and based on that score, your mortgage decision is determined. (Mortgage Application -\> Applicant*'*s Loan Score Estimation -\> Mortgage Decision)*
 
 2\. **Which pairing could be wrong?**
 
