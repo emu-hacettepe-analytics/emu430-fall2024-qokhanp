@@ -4,8 +4,39 @@ title: "Assignment 2"
 
 # Assignment 2
 
+## 1. Using the filters on https://m.imdb.com/search, list all Turkish movies with more
+
+than 2500 reviews, and save the URLs.
+
+<https://m.imdb.com/search/title/?title_type=feature&num_votes=2500,&country_of_origin=TR>
+
+movies_2010_2023 \<- 2010-2023: <https://m.imdb.com/search/title/?title_type=feature&release_date=2010-01-01,2023-12-30&num_votes=2500,&country_of_origin=TR&count=250>
+
+movies_before_2010 \<- - 2009: <https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250>
+
 ```{r}
-1 + 1
+movies_2010_2023 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=2010-01-01,2023-12-30&num_votes=2500,&country_of_origin=TR&count=250"
+
+movies_before_2010 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250"
+
+imdb_urls <- c(movies_2010_2023, movies_before_2010)
+
+# Vektörü görüntüleme
+print(imdb_urls)
 ```
 
-loading...
+## 2. Start web scrapping to create a Data Frame with columns: Title, Year, Duration,
+
+Rating, Votes
+
+The libraries we will need are:
+
+
+```{r}
+
+library(tidyverse)
+library(rvest)
+library(stringr)
+
+```
+

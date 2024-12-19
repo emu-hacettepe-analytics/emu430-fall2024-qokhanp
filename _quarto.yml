@@ -46,4 +46,5 @@ format:
     css: styles.css
     toc: true
     toc-location: left
+    code-fold: true # Kodların açılıp kapanabilir olmasını sağlar
 editor: visual
