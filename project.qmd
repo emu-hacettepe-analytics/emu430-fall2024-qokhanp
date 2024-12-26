@@ -5,8 +5,8 @@ sidebar: false
 
 I'm honored to be a member of the \[group name\] project team.
 
-Below, you'll find a brief summary of our project. To access a detailed project description, please go to [https://\[your-project-url\]](#0){.uri}.
+Below, you'll find a brief summary of our project. To access a detailed project description, please go to [EMU430_project_team_NRG](https://emu-hacettepe-analytics.github.io/emu430-fall2024-team-nrg/).
 
 **Summary**
 
-\[provide a biref summary of your project\]
+Our project explores the role of electric vehicles (EVs) in reducing CO2 emissions and assesses their integration within Türkiye. EVs are recognized for their environmental advantages, especially their capacity to lower transportation-related carbon emissions. This study highlights that although adopting EVs can substantially mitigate emissions, its overall success is influenced by factors like population density and the shift toward renewable energy in electricity production.
