@@ -19,10 +19,10 @@ movies_2010_2023 <- "https://m.imdb.com/search/title/?title_type=feature&release
 
 movies_before_2010 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250"
 
-imdb_urls <- c(movies_2010_2023, movies_before_2010)
+urls <- c(movies_2010_2023, movies_before_2010)
 
 # Vektörü görüntüleme
-print(imdb_urls)
+print(urls)
 ```
 
 ## 2. Start web scrapping to create a Data Frame with columns: Title, Year, Duration,
@@ -39,4 +39,102 @@ library(rvest)
 library(stringr)
 
 ```
+
+
+
+```{r}
+# Veri çekmek için boş bir liste oluşturun
+data_list <- list()
+
+# Her URL için veri çekimi
+for (url in urls) {
+  page <- read_html(url)
+  
+  # Başlıklar
+  titles <- page |>
+    html_nodes('.ipc-title__text') |> 
+    html_text() |>
+  tail(-1) |>  # İlk öğeyi kaldır
+  head(-1)
+  
+  # Yıllar ve Süreler
+  metadata <- page |>
+    html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item') |> 
+    html_text()
+  
+  years <- metadata |> 
+  str_extract("^\\d{4}$") |>  # Sadece 4 basamaklı yıl bilgilerini seç
+  as.numeric()  
+  
+  durations <- metadata[seq(2, length(metadata), by = 2)] |> 
+    str_replace(" min", "") |> 
+    as.numeric()
+  
+  # Oyların ham verisini kontrol et
+raw_votes <- page |>
+  html_nodes('.ipc-rating-star--voteCount') |> 
+  html_text()
+  
+  # Puanlar
+  ratings <- page |>
+    html_nodes('.ipc-rating-star--rating') |> 
+    html_text() |> 
+    as.numeric()
+  
+  # Oy Sayıları
+  votes <- raw_votes |>
+  str_trim() |>                            # Başındaki ve sonundaki boşlukları kaldır
+  str_replace_all('"', "") |>              # Çift tırnakları kaldır
+  str_replace_all("K", "e3") |>            # "K"yi bilimsel gösterimle 1000 olarak değiştir
+  str_replace_all("k", "e3") |>            # "k" için de aynı işlemi yap
+  parse_number()                           # Metni sayıya dönüştür
+
+
+  
+  # Çekilen verileri listeye ekleyin
+  data_list[[url]] <- list(
+    titles = titles,
+    years = years,
+    durations = durations,
+    ratings = ratings,
+    votes = votes
+  )
+}
+
+# Sonuçları kontrol edin
+head(data_list[[urls[1]]]$votes)
+```
+
+
+```{r}
+print(metadata)
+
+
+```
+
+
+```{r}
+print(length(titles))    # Başlıklar
+print(length(years))     # Yıllar
+print(length(durations)) # Süreler
+print(length(ratings))   # Puanlar
+print(length(votes))     # Oy Sayıları
+
+```
+
+
+```{r}
+print(titles)
+print(years)
+print(durations)
+print(ratings)
+print(votes)
+
+```
+
+```{r}
+print(years)
+```
+
+
 
