@@ -3,7 +3,7 @@ title: "Our Course Project"
 sidebar: false 
 ---
 
-I'm honored to be a member of the \[group name\] project team.
+I'm honored to be a member of the NRG project team.
 
 Below, you'll find a brief summary of our project. To access a detailed project description, please go to [EMU430_project_team_NRG](https://emu-hacettepe-analytics.github.io/emu430-fall2024-team-nrg/).
 
