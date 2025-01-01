@@ -192,6 +192,103 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
 # Sonuçları birleştir
 final_movies <- bind_rows(all_movies)
 
+# Sıra numarasını ve noktayı kaldır
+movies$Title <- gsub("^\\d+\\.\\s*", "", movies$Title)
+
+# Gereksiz boşlukları kaldır
+movies$Title <- trimws(movies$Title)
+
+
+
 # Veri çerçevesini görüntüleme
 print(movies)
+```
+
+## 3. Exploratory Data Analysis
+
+### 3.a
+
+```{r}
+# IMDb puanına göre sıralama
+top_movies <- movies |> arrange(desc(Rating)) |> head(5)
+bottom_movies <- movies |> arrange(Rating) |> head(5)
+
+# İlk 5 ve son 5 filmi görüntüle
+print(top_movies)
+print(bottom_movies)
+
+```
+
+### 3.b
+
+```{r}
+# Favori filmlerinizin sıralamadaki yerini kontrol edin
+favorite_movies <- c("Yahsi Bati", "A.R.O.G", "G.O.R.A.")  # Örnek favoriler
+favorite_movies_data <- movies |> filter(Title %in% favorite_movies)
+
+# Sonucu görüntüle
+print(favorite_movies_data)
+
+```
+
+### 3.c
+
+```{r}
+library(ggplot2)
+
+# Yıllara göre ortalama IMDb puanı
+yearly_ratings <- movies |> 
+  group_by(Year) |> 
+  summarise(Average_Rating = mean(Rating, na.rm = TRUE), Movie_Count = n())
+
+# Scatter plot
+ggplot(yearly_ratings, aes(x = Year, y = Average_Rating)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "Yıllara Göre Ortalama IMDb Puanı", x = "Yıl", y = "Ortalama IMDb Puanı")
+
+# Film sayısının yıllara göre analizi
+ggplot(yearly_ratings, aes(x = Year, y = Movie_Count)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Yıllara Göre Film Sayısı", x = "Yıl", y = "Film Sayısı")
+
+```
+
+### 3.d
+
+```{r}
+# Korelasyon analizi
+correlation_votes_ratings <- cor(movies$Votes, movies$Rating, use = "complete.obs")
+print(paste("Votes ve Ratings arasındaki korelasyon: ", correlation_votes_ratings))
+
+# Scatter plot
+ggplot(movies, aes(x = Votes, y = Rating)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "red") +
+  labs(title = "IMDb Puanları ile Oy Sayısı Arasındaki İlişki", x = "Oy Sayısı", y = "IMDb Puanı")
+
+```
+
+### 3.e
+
+```{r}
+# Korelasyon analizi
+correlation_duration_ratings <- cor(movies$Duration, movies$Rating, use = "complete.obs")
+print(paste("Duration ve Ratings arasındaki korelasyon: ", correlation_duration_ratings))
+
+# Scatter plot
+ggplot(movies, aes(x = Duration, y = Rating)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "IMDb Puanları ile Film Suresi Arasındaki iliski", x = "Film Suresi (dakika)", y = "IMDb Puanı")
+
+```
+
+## 4. Top 1000
+
+```{}
+```
+
+```{r}
+
 ```

@@ -222,6 +222,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#using-the-filters-on-httpsm.imdb.comsearch-list-all-turkish-movies-with-more" id="toc-using-the-filters-on-httpsm.imdb.comsearch-list-all-turkish-movies-with-more" class="nav-link" data-scroll-target="#using-the-filters-on-httpsm.imdb.comsearch-list-all-turkish-movies-with-more">1. Using the filters on https://m.imdb.com/search, list all Turkish movies with more</a></li>
   <li><a href="#start-web-scrapping-to-create-a-data-frame-with-columns-title-year-duration" id="toc-start-web-scrapping-to-create-a-data-frame-with-columns-title-year-duration" class="nav-link" data-scroll-target="#start-web-scrapping-to-create-a-data-frame-with-columns-title-year-duration">2. Start web scrapping to create a Data Frame with columns: Title, Year, Duration,</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">3. Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#a" id="toc-a" class="nav-link" data-scroll-target="#a">3.a</a></li>
+  <li><a href="#b" id="toc-b" class="nav-link" data-scroll-target="#b">3.b</a></li>
+  <li><a href="#c" id="toc-c" class="nav-link" data-scroll-target="#c">3.c</a></li>
+  <li><a href="#d" id="toc-d" class="nav-link" data-scroll-target="#d">3.d</a></li>
+  <li><a href="#e" id="toc-e" class="nav-link" data-scroll-target="#e">3.e</a></li>
+  </ul></li>
+  <li><a href="#top-1000" id="toc-top-1000" class="nav-link" data-scroll-target="#top-1000">4. Top 1000</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -362,38 +371,212 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Sonuçları birleştir</span></span>
 <span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>final_movies <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(all_movies)</span>
 <span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Veri çerçevesini görüntüleme</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Sıra numarasını ve noktayı kaldır</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">s*"</span>, <span class="st">""</span>, movies<span class="sc">$</span>Title)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Gereksiz boşlukları kaldır</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">trimws</span>(movies<span class="sc">$</span>Title)</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="co"># Veri çerçevesini görüntüleme</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                       Title Year Duration Rating Votes
-1          1. Babam ve Oglum 2005      108    8.2 96000
-2           2. Gunesi Gordum 2009      120    6.6 11000
-3                3. G.O.R.A. 2004      127    8.0 69000
-4                    4. Uzak 2002      110    7.5 24000
-5               5. Masumiyet 1997      110    8.1 21000
-6                  6. Eskiya 1996      128    8.1 73000
-7                   7. Kader 2006      103    7.7 18000
-8          8. Hababam Sinifi 1975       85    9.2 44000
-9              9. Issiz Adam 2008      113    6.8 24000
-10                 10. Barda 2007       92    7.0 16000
-11 11. Ucurtmayi Vurmasinlar 1989       85    8.2 76000
-12                 12. D@bbe 2006      110    4.3 49000
-13                   13. Yol 1982      107    7.9 15000
-14                14. Vavien 2009      100    7.5 14000
-15  15. Kurtlar Vadisi: Irak 2006      122    5.7 19000
-16                 16. Nefes 2009      128    8.0 36000
-17            17. Agir Roman 1997      120    7.6 12000
-18             18. Vizontele 2001      110    8.0 40000
-19             19. Uc Maymun 2008      109    7.3 23000
-20         20. Sevmek Zamani 1965       86    7.9 79000
-21          21. Recep Ivedik 2008       90    4.9 30000
-22                22. Gemide 1998      102    7.9 17000
-23               23. A.R.O.G 2008      127    7.4 47000
-24            24. Yahsi Bati 2009      112    7.4 39000
-25                25. Itiraf 2001      100    7.0 43000</code></pre>
+<pre><code>                   Title Year Duration Rating Votes
+1         Babam ve Oglum 2005      108    8.2 96000
+2          Gunesi Gordum 2009      120    6.6 11000
+3               G.O.R.A. 2004      127    8.0 69000
+4                   Uzak 2002      110    7.5 24000
+5              Masumiyet 1997      110    8.1 21000
+6                 Eskiya 1996      128    8.1 73000
+7                  Kader 2006      103    7.7 18000
+8         Hababam Sinifi 1975       85    9.2 44000
+9             Issiz Adam 2008      113    6.8 24000
+10                 Barda 2007       92    7.0 16000
+11 Ucurtmayi Vurmasinlar 1989       85    8.2 76000
+12                 D@bbe 2006      110    4.3 49000
+13                   Yol 1982      107    7.9 15000
+14                Vavien 2009      100    7.5 14000
+15  Kurtlar Vadisi: Irak 2006      122    5.7 19000
+16                 Nefes 2009      128    8.0 36000
+17            Agir Roman 1997      120    7.6 12000
+18             Vizontele 2001      110    8.0 40000
+19             Uc Maymun 2008      109    7.3 23000
+20         Sevmek Zamani 1965       86    7.9 79000
+21          Recep Ivedik 2008       90    4.9 30000
+22                Gemide 1998      102    7.9 17000
+23               A.R.O.G 2008      127    7.4 47000
+24            Yahsi Bati 2009      112    7.4 39000
+25                Itiraf 2001      100    7.0 43000</code></pre>
 </div>
 </div>
+</section>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis">3. Exploratory Data Analysis</h2>
+<section id="a" class="level3">
+<h3 class="anchored" data-anchor-id="a">3.a</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># IMDb puanına göre sıralama</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>top_movies <span class="ot">&lt;-</span> movies <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(Rating)) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>bottom_movies <span class="ot">&lt;-</span> movies <span class="sc">|&gt;</span> <span class="fu">arrange</span>(Rating) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">5</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># İlk 5 ve son 5 filmi görüntüle</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Title Year Duration Rating Votes
+1        Hababam Sinifi 1975       85    9.2 44000
+2        Babam ve Oglum 2005      108    8.2 96000
+3 Ucurtmayi Vurmasinlar 1989       85    8.2 76000
+4             Masumiyet 1997      110    8.1 21000
+5                Eskiya 1996      128    8.1 73000</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bottom_movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Title Year Duration Rating Votes
+1                D@bbe 2006      110    4.3 49000
+2         Recep Ivedik 2008       90    4.9 30000
+3 Kurtlar Vadisi: Irak 2006      122    5.7 19000
+4        Gunesi Gordum 2009      120    6.6 11000
+5           Issiz Adam 2008      113    6.8 24000</code></pre>
+</div>
+</div>
+</section>
+<section id="b" class="level3">
+<h3 class="anchored" data-anchor-id="b">3.b</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Favori filmlerinizin sıralamadaki yerini kontrol edin</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>favorite_movies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Yahsi Bati"</span>, <span class="st">"A.R.O.G"</span>, <span class="st">"G.O.R.A."</span>)  <span class="co"># Örnek favoriler</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>favorite_movies_data <span class="ot">&lt;-</span> movies <span class="sc">|&gt;</span> <span class="fu">filter</span>(Title <span class="sc">%in%</span> favorite_movies)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Sonucu görüntüle</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(favorite_movies_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Title Year Duration Rating Votes
+1   G.O.R.A. 2004      127    8.0 69000
+2    A.R.O.G 2008      127    7.4 47000
+3 Yahsi Bati 2009      112    7.4 39000</code></pre>
+</div>
+</div>
+</section>
+<section id="c" class="level3">
+<h3 class="anchored" data-anchor-id="c">3.c</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Yıllara göre ortalama IMDb puanı</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>yearly_ratings <span class="ot">&lt;-</span> movies <span class="sc">|&gt;</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Year) <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Average_Rating =</span> <span class="fu">mean</span>(Rating, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">Movie_Count =</span> <span class="fu">n</span>())</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(yearly_ratings, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> Average_Rating)) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Yıllara Göre Ortalama IMDb Puanı"</span>, <span class="at">x =</span> <span class="st">"Yıl"</span>, <span class="at">y =</span> <span class="st">"Ortalama IMDb Puanı"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="assignment-2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Film sayısının yıllara göre analizi</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(yearly_ratings, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> Movie_Count)) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Yıllara Göre Film Sayısı"</span>, <span class="at">x =</span> <span class="st">"Yıl"</span>, <span class="at">y =</span> <span class="st">"Film Sayısı"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="assignment-2_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="d" class="level3">
+<h3 class="anchored" data-anchor-id="d">3.d</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Korelasyon analizi</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>correlation_votes_ratings <span class="ot">&lt;-</span> <span class="fu">cor</span>(movies<span class="sc">$</span>Votes, movies<span class="sc">$</span>Rating, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Votes ve Ratings arasındaki korelasyon: "</span>, correlation_votes_ratings))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Votes ve Ratings arasındaki korelasyon:  0.254054459679486"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(movies, <span class="fu">aes</span>(<span class="at">x =</span> Votes, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">col =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"IMDb Puanları ile Oy Sayısı Arasındaki İlişki"</span>, <span class="at">x =</span> <span class="st">"Oy Sayısı"</span>, <span class="at">y =</span> <span class="st">"IMDb Puanı"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="assignment-2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="e" class="level3">
+<h3 class="anchored" data-anchor-id="e">3.e</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Korelasyon analizi</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>correlation_duration_ratings <span class="ot">&lt;-</span> <span class="fu">cor</span>(movies<span class="sc">$</span>Duration, movies<span class="sc">$</span>Rating, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Duration ve Ratings arasındaki korelasyon: "</span>, correlation_duration_ratings))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Duration ve Ratings arasındaki korelasyon:  -0.0633030865033471"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(movies, <span class="fu">aes</span>(<span class="at">x =</span> Duration, <span class="at">y =</span> Rating)) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">col =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"IMDb Puanları ile Film Suresi Arasındaki iliski"</span>, <span class="at">x =</span> <span class="st">"Film Suresi (dakika)"</span>, <span class="at">y =</span> <span class="st">"IMDb Puanı"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="assignment-2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="top-1000" class="level2">
+<h2 class="anchored" data-anchor-id="top-1000">4. Top 1000</h2>
+<pre><code></code></pre>
 
 
 </section>
