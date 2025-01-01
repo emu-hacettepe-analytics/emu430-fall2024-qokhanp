@@ -15,6 +15,7 @@ movies_2010_2023 \<- 2010-2023: <https://m.imdb.com/search/title/?title_type=fea
 movies_before_2010 \<- - 2009: <https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250>
 
 ```{r}
+#| echo: false
 movies_2010_2023 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=2010-01-01,2023-12-30&num_votes=2500,&country_of_origin=TR&count=250"
 
 movies_before_2010 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250"
@@ -27,114 +28,170 @@ print(urls)
 
 ## 2. Start web scrapping to create a Data Frame with columns: Title, Year, Duration,
 
-Rating, Votes
-
 The libraries we will need are:
 
-
 ```{r}
+#| echo: true
+#| message: false
+#| warning: false
 
 library(tidyverse)
 library(rvest)
 library(stringr)
+library(stringi)
 
 ```
 
+```{r}
+#| echo: false
+# Türkçe karakterleri basit ASCII karakterlere dönüştür
+simplify_text <- function(text) {
+  # Geçersiz karakterleri kaldır ve UTF-8 kodlamasına zorla
+  text <- iconv(text, from = "UTF-8", to = "ASCII//TRANSLIT", sub = "")
+  
+  # Başındaki ve sonundaki boşlukları temizle
+  text <- gsub("^\\s+|\\s+$", "", text)
+  
+  return(text)
+}
 
+```
 
 ```{r}
-# Veri çekmek için boş bir liste oluşturun
-data_list <- list()
+#| echo: false
+#Saatleri dakikaya çevirme fonksiyonu
+convert_duration_to_minutes <- function(duration) {
+  # NA kontrolü
+  if (is.na(duration)) {
+    return(NA)
+  }
+  
+  # Sadece saat olan durumlar için kontrol (örn: "2h")
+  if (grepl("^\\d+h$", duration)) {
+    hours <- as.numeric(gsub("h$", "", duration))
+    return(hours * 60)
+  }
+  
+  # Saat ve dakika olan durumlar için (örn: "2h 7m")
+  parts <- strsplit(duration, " ")[[1]]
+  hours <- as.numeric(gsub("h$", "", parts[1]))
+  minutes <- as.numeric(gsub("m$", "", parts[2]))
+  
+  return(hours * 60 + minutes)
+}
+```
 
-# Her URL için veri çekimi
+```{r}
+#| echo: false
+# Oy sayılarını temizlemek için bir yardımcı fonksiyon
+clean_vote <- function(vote) {
+  # Çift tırnakları ve boşlukları kaldır
+  vote <- str_replace_all(vote, '"', "")         # Çift tırnakları kaldır
+  vote <- str_trim(vote)                        # Başındaki ve sonundaki boşlukları kaldır
+  
+  # Eğer 'K' harfi içeriyorsa (binler için)
+  if (grepl("K", vote)) {
+    vote <- str_replace_all(vote, "[()K]", "")  # Parantezleri ve 'K' harfini kaldır
+    vote <- str_replace_all(vote, "\\.", "")    # Noktaları kaldır (örneğin 7.9K -> 7900)
+    return(as.numeric(vote) * 1000)             # 1000 ile çarp
+    
+  # Eğer 'M' harfi içeriyorsa (milyonlar için)
+  } else if (grepl("M", vote)) {
+    vote <- str_replace_all(vote, "[()M]", "")  # Parantezleri ve 'M' harfini kaldır
+    return(as.numeric(vote) * 1e6)              # 1 milyon ile çarp
+    
+  # Diğer durumlar
+  } else {
+    vote <- str_replace_all(vote, "[()]", "")   # Sadece parantezleri kaldır
+    return(as.numeric(vote))                   # Sayıya çevir
+  }
+}
+
+```
+
+```{r}
+#| echo: true
+#| warning: false
+# Tüm veriler için boş bir liste oluştur
+all_movies <- list()
+
 for (url in urls) {
-  page <- read_html(url)
+  data_html <- read_html(url)
   
-  # Başlıklar
-  titles <- page |>
-    html_nodes('.ipc-title__text') |> 
-    html_text() |>
-  tail(-1) |>  # İlk öğeyi kaldır
-  head(-1)
+# Başlıkları çekme ve temizleme
+titles <- data_html |> 
+  html_nodes('.ipc-title__text') |> 
+  html_text() |> 
+  tail(-1)
+titles <- head(titles, -1)
+
+
+# Kodlamayı ve boşlukları düzelt
+cleaned_titles <- sapply(titles, simplify_text)
+
+# Benzersiz başlıkları seçmek ve bozuk olanları temizlemek
+cleaned_titles <- unique(cleaned_titles)  # Tekrarlayan başlıkları kaldır
+cleaned_titles <- cleaned_titles[!grepl("\\?\\u", cleaned_titles)]  # Bozuk başlıkları kaldır
   
-  # Yıllar ve Süreler
-  metadata <- page |>
-    html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item') |> 
-    html_text()
-  
-  years <- metadata |> 
-  str_extract("^\\d{4}$") |>  # Sadece 4 basamaklı yıl bilgilerini seç
-  as.numeric()  
-  
-  durations <- metadata[seq(2, length(metadata), by = 2)] |> 
-    str_replace(" min", "") |> 
+  # Yılları çekme
+  years <- data_html |> 
+    html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)') |> 
+    html_text() |> 
+    str_extract("\\d{4}") |> 
     as.numeric()
   
-  # Oyların ham verisini kontrol et
-raw_votes <- page |>
-  html_nodes('.ipc-rating-star--voteCount') |> 
+durations <- data_html |> 
+  html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(2)') |> 
   html_text()
+
+# Süreleri dakikaya çevirme
+convert_duration_to_minutes <- function(duration) {
+  # Saat ve dakika formatını kontrol et
+  if (grepl("^\\d+h$", duration)) {
+    # Sadece saat varsa (örn: "2h")
+    hours <- as.numeric(gsub("h$", "", duration))
+    return(hours * 60)
+  } else {
+    # Saat ve dakika varsa (örn: "2h 7m")
+    matches <- str_match(duration, "(\\d+)h (\\d+)m")
+    hours <- as.numeric(matches[, 2])
+    minutes <- as.numeric(matches[, 3])
+    return(hours * 60 + minutes)
+  }
+}
+
+# Tüm süreleri dakikaya çevir
+durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
   
-  # Puanlar
-  ratings <- page |>
+  # Puanları çekme
+  ratings <- data_html |> 
     html_nodes('.ipc-rating-star--rating') |> 
     html_text() |> 
     as.numeric()
   
-  # Oy Sayıları
-  votes <- raw_votes |>
-  str_trim() |>                            # Başındaki ve sonundaki boşlukları kaldır
-  str_replace_all('"', "") |>              # Çift tırnakları kaldır
-  str_replace_all("K", "e3") |>            # "K"yi bilimsel gösterimle 1000 olarak değiştir
-  str_replace_all("k", "e3") |>            # "k" için de aynı işlemi yap
-  parse_number()                           # Metni sayıya dönüştür
-
-
+  # Oy sayısını çekme ve temizleme
+  votes_raw <- data_html |> 
+    html_nodes('.ipc-rating-star--voteCount') |> 
+    html_text()
   
-  # Çekilen verileri listeye ekleyin
-  data_list[[url]] <- list(
-    titles = titles,
-    years = years,
-    durations = durations,
-    ratings = ratings,
-    votes = votes
+  votes_clean <- sapply(votes_raw, clean_vote)
+  
+  # Veri çerçevesi oluşturma
+  movies <- data.frame(
+    Title = cleaned_titles,
+    Year = years,
+    Duration = durations_in_minutes,
+    Rating = ratings,
+    Votes = votes_clean
   )
+  
+  # Tüm filmleri birleştir
+  all_movies <- append(all_movies, list(movies))
 }
 
-# Sonuçları kontrol edin
-head(data_list[[urls[1]]]$votes)
+# Sonuçları birleştir
+final_movies <- bind_rows(all_movies)
+
+# Veri çerçevesini görüntüleme
+print(movies)
 ```
-
-
-```{r}
-print(metadata)
-
-
-```
-
-
-```{r}
-print(length(titles))    # Başlıklar
-print(length(years))     # Yıllar
-print(length(durations)) # Süreler
-print(length(ratings))   # Puanlar
-print(length(votes))     # Oy Sayıları
-
-```
-
-
-```{r}
-print(titles)
-print(years)
-print(durations)
-print(ratings)
-print(votes)
-
-```
-
-```{r}
-print(years)
-```
-
-
-
