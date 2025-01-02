@@ -15,7 +15,9 @@ movies_2010_2023 \<- 2010-2023: <https://m.imdb.com/search/title/?title_type=fea
 movies_before_2010 \<- - 2009: <https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250>
 
 ```{r}
-#| echo: false
+#| echo: true
+#| message: false
+#| warning: false
 movies_2010_2023 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=2010-01-01,2023-12-30&num_votes=2500,&country_of_origin=TR&count=250"
 
 movies_before_2010 <- "https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250"
@@ -43,7 +45,9 @@ library(stringi)
 ```
 
 ```{r}
-#| echo: false
+#| echo: true
+#| message: false
+#| warning: false
 # Türkçe karakterleri basit ASCII karakterlere dönüştür
 simplify_text <- function(text) {
   # Geçersiz karakterleri kaldır ve UTF-8 kodlamasına zorla
@@ -58,7 +62,9 @@ simplify_text <- function(text) {
 ```
 
 ```{r}
-#| echo: false
+#| echo: true
+#| message: false
+#| warning: false
 #Saatleri dakikaya çevirme fonksiyonu
 convert_duration_to_minutes <- function(duration) {
   # NA kontrolü
@@ -82,7 +88,9 @@ convert_duration_to_minutes <- function(duration) {
 ```
 
 ```{r}
-#| echo: false
+#| echo: true
+#| message: false
+#| warning: false
 # Oy sayılarını temizlemek için bir yardımcı fonksiyon
 clean_vote <- function(vote) {
   # Çift tırnakları ve boşlukları kaldır
@@ -114,6 +122,11 @@ clean_vote <- function(vote) {
 #| warning: false
 # Tüm veriler için boş bir liste oluştur
 all_movies <- list()
+all_cleaned_titles <- c()
+all_years <- c()
+all_durations <- c()
+all_votes <- c()
+all_ratings <- c()
 
 for (url in urls) {
   data_html <- read_html(url)
@@ -126,19 +139,26 @@ titles <- data_html |>
 titles <- head(titles, -1)
 
 
+
+
 # Kodlamayı ve boşlukları düzelt
 cleaned_titles <- sapply(titles, simplify_text)
 
 # Benzersiz başlıkları seçmek ve bozuk olanları temizlemek
 cleaned_titles <- unique(cleaned_titles)  # Tekrarlayan başlıkları kaldır
 cleaned_titles <- cleaned_titles[!grepl("\\?\\u", cleaned_titles)]  # Bozuk başlıkları kaldır
-  
-  # Yılları çekme
+
+# Listeye ekle
+  all_cleaned_titles <- c(all_cleaned_titles, cleaned_titles)
+
+# Yılları çekme
   years <- data_html |> 
     html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)') |> 
     html_text() |> 
     str_extract("\\d{4}") |> 
     as.numeric()
+  
+  all_years <- c(all_years, years)
   
 durations <- data_html |> 
   html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(2)') |> 
@@ -162,12 +182,17 @@ convert_duration_to_minutes <- function(duration) {
 
 # Tüm süreleri dakikaya çevir
 durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
+
+# List
+ all_durations <- c(all_durations, durations_in_minutes)
   
   # Puanları çekme
   ratings <- data_html |> 
     html_nodes('.ipc-rating-star--rating') |> 
     html_text() |> 
     as.numeric()
+  
+  all_ratings <- c(all_ratings, ratings)
   
   # Oy sayısını çekme ve temizleme
   votes_raw <- data_html |> 
@@ -176,33 +201,35 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
   
   votes_clean <- sapply(votes_raw, clean_vote)
   
+  all_votes <- c(all_votes, votes_clean)
+  
+  
   # Veri çerçevesi oluşturma
   movies <- data.frame(
-    Title = cleaned_titles,
-    Year = years,
-    Duration = durations_in_minutes,
-    Rating = ratings,
-    Votes = votes_clean
+    Title = all_cleaned_titles,
+    Year = all_years,
+    Duration = all_durations,
+    Rating = all_ratings,
+    Votes = all_votes
   )
   
-  # Tüm filmleri birleştir
-  all_movies <- append(all_movies, list(movies))
 }
 
 # Sonuçları birleştir
-final_movies <- bind_rows(all_movies)
+final_movies <- bind_rows(movies)
 
 # Sıra numarasını ve noktayı kaldır
-movies$Title <- gsub("^\\d+\\.\\s*", "", movies$Title)
+final_movies$Title <- gsub("^\\d+\\.\\s*", "", final_movies$Title)
 
 # Gereksiz boşlukları kaldır
-movies$Title <- trimws(movies$Title)
+final_movies$Title <- trimws(final_movies$Title)
 
 
 
 # Veri çerçevesini görüntüleme
-print(movies)
+print(final_movies)
 ```
+
 
 ## 3. Exploratory Data Analysis
 
@@ -210,8 +237,8 @@ print(movies)
 
 ```{r}
 # IMDb puanına göre sıralama
-top_movies <- movies |> arrange(desc(Rating)) |> head(5)
-bottom_movies <- movies |> arrange(Rating) |> head(5)
+top_movies <- final_movies |> arrange(desc(Rating)) |> head(5)
+bottom_movies <- final_movies |> arrange(Rating) |> head(5)
 
 # İlk 5 ve son 5 filmi görüntüle
 print(top_movies)
@@ -224,7 +251,7 @@ print(bottom_movies)
 ```{r}
 # Favori filmlerinizin sıralamadaki yerini kontrol edin
 favorite_movies <- c("Yahsi Bati", "A.R.O.G", "G.O.R.A.")  # Örnek favoriler
-favorite_movies_data <- movies |> filter(Title %in% favorite_movies)
+favorite_movies_data <- final_movies |> filter(Title %in% favorite_movies)
 
 # Sonucu görüntüle
 print(favorite_movies_data)
@@ -237,7 +264,7 @@ print(favorite_movies_data)
 library(ggplot2)
 
 # Yıllara göre ortalama IMDb puanı
-yearly_ratings <- movies |> 
+yearly_ratings <- final_movies |> 
   group_by(Year) |> 
   summarise(Average_Rating = mean(Rating, na.rm = TRUE), Movie_Count = n())
 
@@ -258,11 +285,11 @@ ggplot(yearly_ratings, aes(x = Year, y = Movie_Count)) +
 
 ```{r}
 # Korelasyon analizi
-correlation_votes_ratings <- cor(movies$Votes, movies$Rating, use = "complete.obs")
+correlation_votes_ratings <- cor(final_movies$Votes, final_movies$Rating, use = "complete.obs")
 print(paste("Votes ve Ratings arasındaki korelasyon: ", correlation_votes_ratings))
 
 # Scatter plot
-ggplot(movies, aes(x = Votes, y = Rating)) +
+ggplot(final_movies, aes(x = Votes, y = Rating)) +
   geom_point() +
   geom_smooth(method = "lm", col = "red") +
   labs(title = "IMDb Puanları ile Oy Sayısı Arasındaki İlişki", x = "Oy Sayısı", y = "IMDb Puanı")
@@ -273,11 +300,11 @@ ggplot(movies, aes(x = Votes, y = Rating)) +
 
 ```{r}
 # Korelasyon analizi
-correlation_duration_ratings <- cor(movies$Duration, movies$Rating, use = "complete.obs")
+correlation_duration_ratings <- cor(final_movies$Duration, final_movies$Rating, use = "complete.obs")
 print(paste("Duration ve Ratings arasındaki korelasyon: ", correlation_duration_ratings))
 
 # Scatter plot
-ggplot(movies, aes(x = Duration, y = Rating)) +
+ggplot(final_movies, aes(x = Duration, y = Rating)) +
   geom_point() +
   geom_smooth(method = "lm", col = "blue") +
   labs(title = "IMDb Puanları ile Film Suresi Arasındaki iliski", x = "Film Suresi (dakika)", y = "IMDb Puanı")
