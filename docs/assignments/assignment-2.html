@@ -487,7 +487,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4                Kis Uykusu 2014      196    8.0  57000
 5         Cebimdeki Yabanci 2018       95    6.8  10000
 6                      Ayla 2017      125    8.2  45000
-7   Bir Zamanlar Anadolu'da 2011      157    7.8  51000
+7   Bir Zamanlar Anadolu'da 2011      157    7.8  52000
 8               Ahlat Agaci 2018      188    8.0  29000
 9   Istanbul Icin Son Cagri 2023       91    5.3  96000
 10                   Dag II 2016      135    8.2 111000
@@ -641,7 +641,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Votes ve Ratings arasındaki korelasyon: "</span>, correlation_votes_ratings))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Votes ve Ratings arasındaki korelasyon:  0.0823806163993564"</code></pre>
+<pre><code>[1] "Votes ve Ratings arasındaki korelasyon:  0.0827775968323517"</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -698,7 +698,155 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="top-1000" class="level2">
 <h2 class="anchored" data-anchor-id="top-1000">4. Top 1000</h2>
-<pre><code></code></pre>
+<p>top1000_turkish_movies_url &lt;- https://www.imdb.com/search/title/?title_type=feature&amp;groups=top_1000&amp;country_of_origin=TR</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># IMDb Top 1000 Türk filmleri için URL</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>imdb_top_1000_url <span class="ot">&lt;-</span> <span class="st">"https://www.imdb.com/search/title/?title_type=feature&amp;groups=top_1000&amp;country_of_origin=TR"</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Veriyi web sayfasından çekme</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>top_1000_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(imdb_top_1000_url)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Başlıkları ve yılları çekme</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>top_1000_titles <span class="ot">&lt;-</span> top_1000_html <span class="sc">|&gt;</span> </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">'.ipc-title__text'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tail</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>cleaned_top_titles <span class="ot">&lt;-</span> <span class="fu">sapply</span>(top_1000_titles, simplify_text)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Benzersiz başlıkları seçmek ve bozuk olanları temizlemek</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>cleaned_top_titles <span class="ot">&lt;-</span> <span class="fu">unique</span>(cleaned_top_titles)  <span class="co"># Tekrarlayan başlıkları kaldır</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>cleaned_top_titles <span class="ot">&lt;-</span> cleaned_top_titles[<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">?</span><span class="sc">\\</span><span class="st">u"</span>, cleaned_top_titles)]  <span class="co"># Bozuk başlıkları kaldır</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>top_1000_years <span class="ot">&lt;-</span> top_1000_html <span class="sc">|&gt;</span> </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">'.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>()</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Yeni veri çerçevesi oluşturma</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>top_1000_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Title =</span> cleaned_top_titles, <span class="at">Year =</span> top_1000_years)</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Sıra numarasını ve noktayı kaldır</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>top_1000_df<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">s*"</span>, <span class="st">""</span>, top_1000_df<span class="sc">$</span>Title)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Gereksiz boşlukları kaldır</span></span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>top_1000_df<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">trimws</span>(top_1000_df<span class="sc">$</span>Title)</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Sonucu kontrol et</span></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_1000_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Title Year
+1  Yedinci Kogustaki Mucize 2019
+2                Kis Uykusu 2014
+3                      Ayla 2017
+4   Bir Zamanlar Anadolu'da 2011
+5            Babam ve Oglum 2005
+6               Ahlat Agaci 2018
+7                  G.O.R.A. 2004
+8                    Eskiya 1996
+9                     Nefes 2009
+10                Vizontele 2001
+11 Her Sey Cok Guzel Olacak 1998</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Veri setlerini birleştirme</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>merged_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(top_1000_df, final_movies, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Title"</span>, <span class="st">"Year"</span>))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sonucu kontrol et</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(merged_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Title Year Duration Rating Votes
+1  Yedinci Kogustaki Mucize 2019      132    8.2 58000
+2                Kis Uykusu 2014      196    8.0 57000
+3                      Ayla 2017      125    8.2 45000
+4   Bir Zamanlar Anadolu'da 2011      157    7.8 52000
+5            Babam ve Oglum 2005      108    8.2 96000
+6               Ahlat Agaci 2018      188    8.0 29000
+7                  G.O.R.A. 2004      127    8.0 69000
+8                    Eskiya 1996      128    8.1 73000
+9                     Nefes 2009      128    8.0 36000
+10                Vizontele 2001      110    8.0 40000
+11 Her Sey Cok Guzel Olacak 1998       NA     NA    NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># IMDb puanına göre sıralama</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ranked_movies <span class="ot">&lt;-</span> merged_df <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(Rating))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sıralı veri çerçevesini kontrol et</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ranked_movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Title Year Duration Rating Votes
+1  Yedinci Kogustaki Mucize 2019      132    8.2 58000
+2                      Ayla 2017      125    8.2 45000
+3            Babam ve Oglum 2005      108    8.2 96000
+4                    Eskiya 1996      128    8.1 73000
+5                Kis Uykusu 2014      196    8.0 57000
+6               Ahlat Agaci 2018      188    8.0 29000
+7                  G.O.R.A. 2004      127    8.0 69000
+8                     Nefes 2009      128    8.0 36000
+9                 Vizontele 2001      110    8.0 40000
+10  Bir Zamanlar Anadolu'da 2011      157    7.8 52000
+11 Her Sey Cok Guzel Olacak 1998       NA     NA    NA</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># İlk 11 filmi kontrol et</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ranked_movies, <span class="dv">11</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      Title Year Duration Rating Votes
+1  Yedinci Kogustaki Mucize 2019      132    8.2 58000
+2                      Ayla 2017      125    8.2 45000
+3            Babam ve Oglum 2005      108    8.2 96000
+4                    Eskiya 1996      128    8.1 73000
+5                Kis Uykusu 2014      196    8.0 57000
+6               Ahlat Agaci 2018      188    8.0 29000
+7                  G.O.R.A. 2004      127    8.0 69000
+8                     Nefes 2009      128    8.0 36000
+9                 Vizontele 2001      110    8.0 40000
+10  Bir Zamanlar Anadolu'da 2011      157    7.8 52000
+11 Her Sey Cok Guzel Olacak 1998       NA     NA    NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ortalama IMDb puanı</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>average_rating <span class="ot">&lt;-</span> <span class="fu">mean</span>(ranked_movies<span class="sc">$</span>Rating, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Top 1000 Türk Filmlerinin Ortalama IMDb Puanı: "</span>, average_rating))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Top 1000 Türk Filmlerinin Ortalama IMDb Puanı:  8.05"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Yıllara göre dağılım</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ranked_movies, <span class="fu">aes</span>(<span class="at">x =</span> Year)) <span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 1000 Türk Filmlerinin Yıllara Göre Dağılımı"</span>, <span class="at">x =</span> <span class="st">"Yıl"</span>, <span class="at">y =</span> <span class="st">"Film Sayısı"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="assignment-2_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

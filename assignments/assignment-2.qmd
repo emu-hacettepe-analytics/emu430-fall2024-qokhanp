@@ -313,9 +313,84 @@ ggplot(final_movies, aes(x = Duration, y = Rating)) +
 
 ## 4. Top 1000
 
-```{}
+top1000_turkish_movies_url <- https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR
+
+```{r}
+# IMDb Top 1000 Türk filmleri için URL
+imdb_top_1000_url <- "https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR"
+
+# Veriyi web sayfasından çekme
+top_1000_html <- read_html(imdb_top_1000_url)
+
+# Başlıkları ve yılları çekme
+top_1000_titles <- top_1000_html |> 
+  html_nodes('.ipc-title__text') |> 
+  html_text() |> 
+  tail(-1) |>
+  head(-1)
+
+cleaned_top_titles <- sapply(top_1000_titles, simplify_text)
+
+# Benzersiz başlıkları seçmek ve bozuk olanları temizlemek
+cleaned_top_titles <- unique(cleaned_top_titles)  # Tekrarlayan başlıkları kaldır
+cleaned_top_titles <- cleaned_top_titles[!grepl("\\?\\u", cleaned_top_titles)]  # Bozuk başlıkları kaldır
+
+top_1000_years <- top_1000_html |> 
+  html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)') |> 
+  html_text() |> 
+  as.numeric()
+
+# Yeni veri çerçevesi oluşturma
+top_1000_df <- data.frame(Title = cleaned_top_titles, Year = top_1000_years)
+
+
+# Sıra numarasını ve noktayı kaldır
+top_1000_df$Title <- gsub("^\\d+\\.\\s*", "", top_1000_df$Title)
+
+# Gereksiz boşlukları kaldır
+top_1000_df$Title <- trimws(top_1000_df$Title)
+
+
+# Sonucu kontrol et
+print(top_1000_df)
+
+
+
+```
+
+
+```{r}
+# Veri setlerini birleştirme
+merged_df <- left_join(top_1000_df, final_movies, by = c("Title", "Year"))
+
+# Sonucu kontrol et
+print(merged_df)
+
+```
+
+
+
+```{r}
+# IMDb puanına göre sıralama
+ranked_movies <- merged_df |> arrange(desc(Rating))
+
+# Sıralı veri çerçevesini kontrol et
+print(ranked_movies)
+
+# İlk 11 filmi kontrol et
+head(ranked_movies, 11)
+
 ```
 
 ```{r}
+# Ortalama IMDb puanı
+average_rating <- mean(ranked_movies$Rating, na.rm = TRUE)
+print(paste("Top 1000 Türk Filmlerinin Ortalama IMDb Puanı: ", average_rating))
+
+# Yıllara göre dağılım
+ggplot(ranked_movies, aes(x = Year)) +
+  geom_bar() +
+  labs(title = "Top 1000 Türk Filmlerinin Yıllara Göre Dağılımı", x = "Yıl", y = "Film Sayısı")
 
 ```
+
