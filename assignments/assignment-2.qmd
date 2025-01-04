@@ -4,15 +4,17 @@ title: "Assignment 2"
 
 # Assignment 2
 
-## 1. Using the filters on https://m.imdb.com/search, list all Turkish movies with more
+## 1. URLs
 
-than 2500 reviews, and save the URLs.
+Filtered in imdb.com
 
 <https://m.imdb.com/search/title/?title_type=feature&num_votes=2500,&country_of_origin=TR>
 
 movies_2010_2023 \<- 2010-2023: <https://m.imdb.com/search/title/?title_type=feature&release_date=2010-01-01,2023-12-30&num_votes=2500,&country_of_origin=TR&count=250>
 
 movies_before_2010 \<- - 2009: <https://m.imdb.com/search/title/?title_type=feature&release_date=,2009-12-31&num_votes=2500,&country_of_origin=TR&count=250>
+
+Urls in vector
 
 ```{r}
 #| echo: true
@@ -24,11 +26,10 @@ movies_before_2010 <- "https://m.imdb.com/search/title/?title_type=feature&relea
 
 urls <- c(movies_2010_2023, movies_before_2010)
 
-# Vektörü görüntüleme
 print(urls)
 ```
 
-## 2. Start web scrapping to create a Data Frame with columns: Title, Year, Duration,
+## 2. Web Scrapping
 
 The libraries we will need are:
 
@@ -42,13 +43,18 @@ library(rvest)
 library(stringr)
 library(stringi)
 
+
 ```
+
+Some functions I need:
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Türkçe karakterleri basit ASCII karakterlere dönüştür
+# GPT helped me that for functions.
+# Prompt: Turkish characters cause some trouble how can we fix that?
+# Function: convert Turkish characters to simple ASCII characters
 simplify_text <- function(text) {
   # Geçersiz karakterleri kaldır ve UTF-8 kodlamasına zorla
   text <- iconv(text, from = "UTF-8", to = "ASCII//TRANSLIT", sub = "")
@@ -65,53 +71,50 @@ simplify_text <- function(text) {
 #| echo: true
 #| message: false
 #| warning: false
-#Saatleri dakikaya çevirme fonksiyonu
+# Function: Convert hours to minutes
 convert_duration_to_minutes <- function(duration) {
-  # NA kontrolü
-  if (is.na(duration)) {
-    return(NA)
-  }
-  
-  # Sadece saat olan durumlar için kontrol (örn: "2h")
+  # Saat ve dakika formatını kontrol et
   if (grepl("^\\d+h$", duration)) {
+    # If just hours (no minutes) (ex: "2h")
     hours <- as.numeric(gsub("h$", "", duration))
     return(hours * 60)
+  } else {
+    # Both (ex: "2h 7m")
+    matches <- str_match(duration, "(\\d+)h (\\d+)m")
+    hours <- as.numeric(matches[, 2])
+    minutes <- as.numeric(matches[, 3])
+    return(hours * 60 + minutes)
   }
-  
-  # Saat ve dakika olan durumlar için (örn: "2h 7m")
-  parts <- strsplit(duration, " ")[[1]]
-  hours <- as.numeric(gsub("h$", "", parts[1]))
-  minutes <- as.numeric(gsub("m$", "", parts[2]))
-  
-  return(hours * 60 + minutes)
 }
+
 ```
 
 ```{r}
 #| echo: true
 #| message: false
 #| warning: false
-# Oy sayılarını temizlemek için bir yardımcı fonksiyon
+
+# Function: Clean the vote data
 clean_vote <- function(vote) {
-  # Çift tırnakları ve boşlukları kaldır
-  vote <- str_replace_all(vote, '"', "")         # Çift tırnakları kaldır
-  vote <- str_trim(vote)                        # Başındaki ve sonundaki boşlukları kaldır
+  # Remove double quotes and spaces.
+  vote <- str_replace_all(vote, '"', "")         
+  vote <- str_trim(vote) 
   
-  # Eğer 'K' harfi içeriyorsa (binler için)
+  # If it contains the letter 'K' (for thousands)
   if (grepl("K", vote)) {
-    vote <- str_replace_all(vote, "[()K]", "")  # Parantezleri ve 'K' harfini kaldır
-    vote <- str_replace_all(vote, "\\.", "")    # Noktaları kaldır (örneğin 7.9K -> 7900)
-    return(as.numeric(vote) * 1000)             # 1000 ile çarp
-    
-  # Eğer 'M' harfi içeriyorsa (milyonlar için)
+    vote <- str_replace_all(vote, "[()K]", "")  
+    vote <- str_replace_all(vote, "\\.", "")  
+    return(as.numeric(vote) * 1000)             
+  
+    # If it contains the letter 'M' (for millions)
   } else if (grepl("M", vote)) {
-    vote <- str_replace_all(vote, "[()M]", "")  # Parantezleri ve 'M' harfini kaldır
-    return(as.numeric(vote) * 1e6)              # 1 milyon ile çarp
+    vote <- str_replace_all(vote, "[()M]", "")  
+    return(as.numeric(vote) * 1e6)              
     
-  # Diğer durumlar
+  # Others
   } else {
-    vote <- str_replace_all(vote, "[()]", "")   # Sadece parantezleri kaldır
-    return(as.numeric(vote))                   # Sayıya çevir
+    vote <- str_replace_all(vote, "[()]", "")   
+    return(as.numeric(vote))                  
   }
 }
 
@@ -120,7 +123,7 @@ clean_vote <- function(vote) {
 ```{r}
 #| echo: true
 #| warning: false
-# Tüm veriler için boş bir liste oluştur
+# Create an empty list for all data
 all_movies <- list()
 all_cleaned_titles <- c()
 all_years <- c()
@@ -131,27 +134,27 @@ all_ratings <- c()
 for (url in urls) {
   data_html <- read_html(url)
   
-# Başlıkları çekme ve temizleme
+# Pulling and cleaning headers
 titles <- data_html |> 
   html_nodes('.ipc-title__text') |> 
   html_text() |> 
-  tail(-1)
-titles <- head(titles, -1)
+  tail(-1) |>
+  head(-1)
 
 
 
 
-# Kodlamayı ve boşlukları düzelt
+# Fix encoding and spaces
 cleaned_titles <- sapply(titles, simplify_text)
 
-# Benzersiz başlıkları seçmek ve bozuk olanları temizlemek
-cleaned_titles <- unique(cleaned_titles)  # Tekrarlayan başlıkları kaldır
-cleaned_titles <- cleaned_titles[!grepl("\\?\\u", cleaned_titles)]  # Bozuk başlıkları kaldır
+# Selecting unique titles and cleaning broken ones
+cleaned_titles <- unique(cleaned_titles)  
+cleaned_titles <- cleaned_titles[!grepl("\\?\\u", cleaned_titles)]
 
-# Listeye ekle
+# Add to list
   all_cleaned_titles <- c(all_cleaned_titles, cleaned_titles)
 
-# Yılları çekme
+# Pulling the years
   years <- data_html |> 
     html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)') |> 
     html_text() |> 
@@ -160,33 +163,19 @@ cleaned_titles <- cleaned_titles[!grepl("\\?\\u", cleaned_titles)]  # Bozuk baş
   
   all_years <- c(all_years, years)
   
+# Pulling the durations 
 durations <- data_html |> 
   html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(2)') |> 
   html_text()
 
-# Süreleri dakikaya çevirme
-convert_duration_to_minutes <- function(duration) {
-  # Saat ve dakika formatını kontrol et
-  if (grepl("^\\d+h$", duration)) {
-    # Sadece saat varsa (örn: "2h")
-    hours <- as.numeric(gsub("h$", "", duration))
-    return(hours * 60)
-  } else {
-    # Saat ve dakika varsa (örn: "2h 7m")
-    matches <- str_match(duration, "(\\d+)h (\\d+)m")
-    hours <- as.numeric(matches[, 2])
-    minutes <- as.numeric(matches[, 3])
-    return(hours * 60 + minutes)
-  }
-}
 
-# Tüm süreleri dakikaya çevir
+# Convert all times to minutes
 durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
 
-# List
+# Add in List
  all_durations <- c(all_durations, durations_in_minutes)
   
-  # Puanları çekme
+# Pulling the ratings
   ratings <- data_html |> 
     html_nodes('.ipc-rating-star--rating') |> 
     html_text() |> 
@@ -194,7 +183,7 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
   
   all_ratings <- c(all_ratings, ratings)
   
-  # Oy sayısını çekme ve temizleme
+# Pulling and clearing the vote count
   votes_raw <- data_html |> 
     html_nodes('.ipc-rating-star--voteCount') |> 
     html_text()
@@ -204,7 +193,7 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
   all_votes <- c(all_votes, votes_clean)
   
   
-  # Veri çerçevesi oluşturma
+  # Create data frame
   movies <- data.frame(
     Title = all_cleaned_titles,
     Year = all_years,
@@ -215,32 +204,31 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
   
 }
 
-# Sonuçları birleştir
+# Combine results
 final_movies <- bind_rows(movies)
 
-# Sıra numarasını ve noktayı kaldır
+# Remove sequence number and dot
 final_movies$Title <- gsub("^\\d+\\.\\s*", "", final_movies$Title)
 
-# Gereksiz boşlukları kaldır
+# Remove unnecessary spaces
 final_movies$Title <- trimws(final_movies$Title)
 
 
 
-# Veri çerçevesini görüntüleme
+# Remove unnecessary spaces
 print(final_movies)
 ```
-
 
 ## 3. Exploratory Data Analysis
 
 ### 3.a
 
 ```{r}
-# IMDb puanına göre sıralama
+# Sort by IMDB rates
 top_movies <- final_movies |> arrange(desc(Rating)) |> head(5)
 bottom_movies <- final_movies |> arrange(Rating) |> head(5)
 
-# İlk 5 ve son 5 filmi görüntüle
+# View first 5 ve last 5 filmi
 print(top_movies)
 print(bottom_movies)
 
@@ -249,21 +237,22 @@ print(bottom_movies)
 ### 3.b
 
 ```{r}
-# Favori filmlerinizin sıralamadaki yerini kontrol edin
+# My favorite films
 favorite_movies <- c("Yahsi Bati", "A.R.O.G", "G.O.R.A.")  # Örnek favoriler
 favorite_movies_data <- final_movies |> filter(Title %in% favorite_movies)
 
-# Sonucu görüntüle
 print(favorite_movies_data)
 
 ```
 
 ### 3.c
 
+We visualized the average IMDb scores and the number of movies by year.
+
 ```{r}
 library(ggplot2)
 
-# Yıllara göre ortalama IMDb puanı
+# Average IMDb score by years
 yearly_ratings <- final_movies |> 
   group_by(Year) |> 
   summarise(Average_Rating = mean(Rating, na.rm = TRUE), Movie_Count = n())
@@ -274,7 +263,7 @@ ggplot(yearly_ratings, aes(x = Year, y = Average_Rating)) +
   geom_line() +
   labs(title = "Yıllara Göre Ortalama IMDb Puanı", x = "Yıl", y = "Ortalama IMDb Puanı")
 
-# Film sayısının yıllara göre analizi
+# Analysis of the number of films by years
 ggplot(yearly_ratings, aes(x = Year, y = Movie_Count)) +
   geom_bar(stat = "identity") +
   labs(title = "Yıllara Göre Film Sayısı", x = "Yıl", y = "Film Sayısı")
@@ -283,8 +272,10 @@ ggplot(yearly_ratings, aes(x = Year, y = Movie_Count)) +
 
 ### 3.d
 
+Correlation between Votes and Ratings calculated.
+
 ```{r}
-# Korelasyon analizi
+# Correlation analysis
 correlation_votes_ratings <- cor(final_movies$Votes, final_movies$Rating, use = "complete.obs")
 print(paste("Votes ve Ratings arasındaki korelasyon: ", correlation_votes_ratings))
 
@@ -298,8 +289,10 @@ ggplot(final_movies, aes(x = Votes, y = Rating)) +
 
 ### 3.e
 
+The relationship between IMDb Scores and Movie Duration was examined.
+
 ```{r}
-# Korelasyon analizi
+# Correlation analysis
 correlation_duration_ratings <- cor(final_movies$Duration, final_movies$Rating, use = "complete.obs")
 print(paste("Duration ve Ratings arasındaki korelasyon: ", correlation_duration_ratings))
 
@@ -313,16 +306,16 @@ ggplot(final_movies, aes(x = Duration, y = Rating)) +
 
 ## 4. Top 1000
 
-top1000_turkish_movies_url <- https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR
+top1000_turkish_movies_url \<- https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR
 
 ```{r}
-# IMDb Top 1000 Türk filmleri için URL
+# URL for IMDb Top 1000 Turkish movies
 imdb_top_1000_url <- "https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR"
 
-# Veriyi web sayfasından çekme
+# Pulling data from a web page
 top_1000_html <- read_html(imdb_top_1000_url)
 
-# Başlıkları ve yılları çekme
+# Pull titles and years
 top_1000_titles <- top_1000_html |> 
   html_nodes('.ipc-title__text') |> 
   html_text() |> 
@@ -331,66 +324,70 @@ top_1000_titles <- top_1000_html |>
 
 cleaned_top_titles <- sapply(top_1000_titles, simplify_text)
 
-# Benzersiz başlıkları seçmek ve bozuk olanları temizlemek
-cleaned_top_titles <- unique(cleaned_top_titles)  # Tekrarlayan başlıkları kaldır
-cleaned_top_titles <- cleaned_top_titles[!grepl("\\?\\u", cleaned_top_titles)]  # Bozuk başlıkları kaldır
+# Selecting unique titles and cleaning broken ones
+cleaned_top_titles <- unique(cleaned_top_titles)
+cleaned_top_titles <- cleaned_top_titles[!grepl("\\?\\u", cleaned_top_titles)]
 
 top_1000_years <- top_1000_html |> 
   html_nodes('.sc-300a8231-7.eaXxft.dli-title-metadata-item:nth-child(1)') |> 
   html_text() |> 
   as.numeric()
 
-# Yeni veri çerçevesi oluşturma
+# Create a new data frame
 top_1000_df <- data.frame(Title = cleaned_top_titles, Year = top_1000_years)
 
 
-# Sıra numarasını ve noktayı kaldır
+# Remove sequence number and dot
 top_1000_df$Title <- gsub("^\\d+\\.\\s*", "", top_1000_df$Title)
 
-# Gereksiz boşlukları kaldır
+# Remove unnecessary spaces
 top_1000_df$Title <- trimws(top_1000_df$Title)
 
 
-# Sonucu kontrol et
+# Check the result
 print(top_1000_df)
 
 
 
 ```
 
-
 ```{r}
-# Veri setlerini birleştirme
+# Merge data sets
 merged_df <- left_join(top_1000_df, final_movies, by = c("Title", "Year"))
 
-# Sonucu kontrol et
+# Check the result
 print(merged_df)
 
 ```
 
-
-
 ```{r}
-# IMDb puanına göre sıralama
+# Sort by IMDb score
 ranked_movies <- merged_df |> arrange(desc(Rating))
 
-# Sıralı veri çerçevesini kontrol et
+# Check sequential data frame
 print(ranked_movies)
 
-# İlk 11 filmi kontrol et
+# Check out the top 11 movies
 head(ranked_movies, 11)
 
 ```
 
 ```{r}
-# Ortalama IMDb puanı
+# Average IMDb score
 average_rating <- mean(ranked_movies$Rating, na.rm = TRUE)
 print(paste("Top 1000 Türk Filmlerinin Ortalama IMDb Puanı: ", average_rating))
 
-# Yıllara göre dağılım
 ggplot(ranked_movies, aes(x = Year)) +
-  geom_bar() +
-  labs(title = "Top 1000 Türk Filmlerinin Yıllara Göre Dağılımı", x = "Yıl", y = "Film Sayısı")
+  geom_density(fill = "lightblue", alpha = 0.7) +
+  labs(
+    title = "Top 1000 Türk Filmlerinin Yıllara Göre Yoğunluğu",
+    x = "Yıl",
+    y = "Yoğunluk"
+  ) +
+  theme_minimal()
+
+
 
 ```
 
+Some movies were not in the top 1000, this is because IMDb filters itself by year and the movie made in 1975 does not appear.
