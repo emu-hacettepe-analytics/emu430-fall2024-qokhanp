@@ -223,18 +223,26 @@ print(final_movies)
 
 ### 3.a
 
+-   **Top 5 Movies:**\
+    *Hababam Sınıfı* is a timeless, high-quality comedy that many people watch as their first Turkish film. Its humor and nostalgic charm justify its high IMDb rating.
+
+-   **Bottom 5 Movies:**\
+    *Recep İvedik* is rated low due to its reliance on simple jokes and an abrasive main character, which many find unappealing.
+
 ```{r}
 # Sort by IMDB rates
 top_movies <- final_movies |> arrange(desc(Rating)) |> head(5)
 bottom_movies <- final_movies |> arrange(Rating) |> head(5)
 
-# View first 5 ve last 5 filmi
+# View first 5 ve last 5 film
 print(top_movies)
 print(bottom_movies)
 
 ```
 
 ### 3.b
+
+I don't have any favorite movies in the top 5 and bottom 5.
 
 ```{r}
 # My favorite films
@@ -247,7 +255,61 @@ print(favorite_movies_data)
 
 ### 3.c
 
-We visualized the average IMDb scores and the number of movies by year.
+#### **1. Average IMDb Ratings Over Time (First Graph):**
+
+-   **Peak in the 1980s:** Turkish movies reached their highest average ratings around 1980, with scores nearing 9.0.
+
+-   **Declining Trend:** After 1980, a gradual decline in average ratings is noticeable.
+
+-   **Post-2000 Volatility:** Ratings between 2000 and 2020 exhibit significant fluctuations, mostly ranging between 6.0 and 8.0.
+
+-   **Recent Years:** By 2020, ratings display considerable variation, reflecting a broader spectrum of perceived movie quality.
+
+#### **2. Number of Movies Over Time (Second Graph):**
+
+-   **Low Production (1980–2000):** Consistent but low production during this period, with typically one movie per year reaching the 2500+ votes threshold.
+
+-   **Increase in the 2000s:** A steady rise in movie production begins in the early 2000s.
+
+-   **Spike Around 2020:** A significant peak occurs, with up to five movies in a single year meeting the 2500+ votes criterion.
+
+-   **Recent Trends:** Turkish cinema has been producing more movies that achieve the threshold for higher visibility in recent years.
+
+#### **3. IMDb Rating Distribution Over Time (Box Plot Insights):**
+
+-   **Changes in Distribution:**
+
+    -   Early years (1960s–1990s) show narrow boxes, indicating less variation in ratings and more consistent movie quality.
+
+    -   Post-2000, larger boxes reflect greater variability in ratings.
+
+    -   Median ratings fluctuate more in recent years, suggesting a shift in audience perception.
+
+-   **Outliers and Extremes:**
+
+    -   Outliers appear in some years, highlighting exceptional or poorly received movies.
+
+    -   The length of whiskers varies significantly, showing changes in the spread of ratings over time.
+
+    -   Particularly in recent years (e.g., 2023), the spread of ratings is much larger.
+
+-   **Historical Trends:**
+
+    -   The 1980s and 1990s maintained higher and more consistent ratings.
+
+    -   Post-2000, there is a noticeable shift, with both high-quality productions and lower-rated films becoming more common.
+
+#### **4. Combined Analysis:**
+
+-   **Quantity vs. Quality:** The recent surge in movie production has not been accompanied by a consistent increase in average quality, as perceived by IMDb users.
+
+-   **Diversity in Quality:** The larger number of movies being produced in recent years has likely led to greater diversity in film quality, contributing to wider variations in ratings.
+
+-   **High-Quality Early Productions:** During the 1980s, when fewer movies met the 2500+ votes threshold, those that did were generally of higher quality.
+
+-   **Evolving Industry:** Turkish cinema has transitioned from a period of low-volume, high-rated productions to a modern era characterized by prolific output and varied quality.
+
+This analysis highlights the evolution of Turkish cinema, showcasing its shift from a smaller, more focused industry to one that is increasingly diverse in both quantity and quality. By combining average ratings with distribution data, we gain a fuller understanding of how the industry has developed over time.
 
 ```{r}
 library(ggplot2)
@@ -268,11 +330,60 @@ ggplot(yearly_ratings, aes(x = Year, y = Movie_Count)) +
   geom_bar(stat = "identity") +
   labs(title = "Yıllara Göre Film Sayısı", x = "Yıl", y = "Film Sayısı")
 
+#Box plots of ratings over the years
+#Burada Cerem Üstün'den yardım aldım.
+final_movies |>  
+  group_by(Year) |> 
+  ggplot(aes(x = factor(Year), y= Rating)) +
+  geom_boxplot() +
+  labs(title = "IMDB Ratings Over the Years in Turkiye", x = "Year", y = "IMDB Rating") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 ```
 
 ### 3.d
 
-Correlation between Votes and Ratings calculated.
+The relationship between IMDb ratings and vote counts for Turkish movies shows some interesting insights:
+
+Correlation Analysis:
+
+-   The correlation coefficient of 0.083 indicates an extremely weak positive correlation
+
+-   This means there's almost no linear relationship between how many people vote on a movie and its rating
+
+-   In other words, a movie's popularity (measured by vote count) doesn't strongly predict its perceived quality (rating) or vice versa
+
+Scatter Plot Analysis:
+
+1.  Distribution:
+
+-   Most movies are concentrated between ratings of 6-8 IMDb points
+
+-   The votes range widely from around 2,500 (minimum threshold) to over 100,000
+
+-   There's significant scatter in the data points, showing high variability
+
+2.  Trend Line:
+
+-   The red regression line shows a very slight upward slope
+
+-   The gray confidence interval band widens as vote count increases, suggesting:
+
+```         
+-    More uncertainty in predicting ratings for highly-voted movies
+
+-    Greater variation in ratings among movies with more votes
+```
+
+3.  Outliers:
+
+-   There are several notable outliers, particularly:
+
+    -   Some movies with low ratings (\~4-5) despite having moderate vote counts
+
+    -   A few highly-rated movies (8+) across different vote counts
+
+    Key Takeaway: The data suggests that for Turkish cinema, a movie's popularity (measured by number of votes) is not a reliable indicator of its rating. Popular movies can receive both high and low ratings, and highly-rated movies don't necessarily attract more votes.
 
 ```{r}
 # Correlation analysis
@@ -289,7 +400,49 @@ ggplot(final_movies, aes(x = Votes, y = Rating)) +
 
 ### 3.e
 
-The relationship between IMDb Scores and Movie Duration was examined.
+The relationship between movie duration and IMDb ratings shows some interesting patterns:
+
+Correlation Analysis:
+
+-   The correlation coefficient of 0.225 indicates a weak to moderate positive correlation
+
+-   This is notably stronger than the correlation with vote counts we saw earlier
+
+-   Suggests that longer movies tend to have slightly higher ratings, though the relationship isn't strong
+
+Scatter Plot Analysis:
+
+1.  Distribution:
+
+-   Movie durations mostly range from 75 to 200 minutes
+
+-   Most ratings cluster between 6-8 points
+
+-   The blue regression line shows a clear upward trend
+
+2.  Trend Line:
+
+-   The upward slope of the regression line is more pronounced than in the votes vs. ratings analysis
+
+-   The gray confidence interval widens at the extremes, particularly for longer durations
+
+-   This suggests more uncertainty in predicting ratings for very long movies
+
+3.  Notable Patterns:
+
+-   Very short movies (under 100 minutes) tend to have more varied ratings
+
+-   Some of the highest-rated movies are in the 150-200 minute range
+
+-   There are some notable outliers, particularly:
+
+```         
+-    A few low-rated movies around 100-125 minutes
+
+-    Some very highly rated movies at various durations
+```
+
+Key Takeaway: While there is a weak positive correlation between movie duration and ratings, suggesting that longer Turkish movies tend to receive slightly higher ratings, the relationship isn't strong enough to conclude that duration alone is a reliable predictor of a movie's rating. The pattern might suggest that films with longer runtimes often have more developed storylines or production value, but this is just one of many factors affecting audience reception.
 
 ```{r}
 # Correlation analysis
