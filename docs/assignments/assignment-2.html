@@ -452,16 +452,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine results</span></span>
 <span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>final_movies <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(movies)</span>
 <span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove sequence number and dot</span></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>final_movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">s*"</span>, <span class="st">""</span>, final_movies<span class="sc">$</span>Title)</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co">#GPT helped me about that.</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co">#My prompt: Sequence numbers come with the movies, can you help me delete them?</span></span>
 <span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove unnecessary spaces</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>final_movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">trimws</span>(final_movies<span class="sc">$</span>Title)</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove sequence number and dot</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>final_movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"^</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">s*"</span>, <span class="st">""</span>, final_movies<span class="sc">$</span>Title)</span>
 <span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove unnecessary spaces</span></span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(final_movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove unnecessary spaces</span></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>final_movies<span class="sc">$</span>Title <span class="ot">&lt;-</span> <span class="fu">trimws</span>(final_movies<span class="sc">$</span>Title)</span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove unnecessary spaces</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(final_movies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                      Title Year Duration Rating  Votes
@@ -830,6 +833,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="top-1000" class="level2">
 <h2 class="anchored" data-anchor-id="top-1000">4. Top 1000</h2>
 <p>top1000_turkish_movies_url &lt;- https://www.imdb.com/search/title/?title_type=feature&amp;groups=top_1000&amp;country_of_origin=TR</p>
+<p>Data on the top 1000 Turkish movies was collected.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -910,6 +914,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 11 Her Sey Cok Guzel Olacak 1998       NA     NA    NA</code></pre>
 </div>
 </div>
+<p>Sorted.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -953,6 +958,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 11 Her Sey Cok Guzel Olacak 1998       NA     NA    NA</code></pre>
 </div>
 </div>
+<p>The average was calculated.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>

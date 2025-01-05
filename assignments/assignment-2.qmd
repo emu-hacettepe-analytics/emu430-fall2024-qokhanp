@@ -207,6 +207,9 @@ durations_in_minutes <- sapply(durations, convert_duration_to_minutes)
 # Combine results
 final_movies <- bind_rows(movies)
 
+#GPT helped me about that.
+#My prompt: Sequence numbers come with the movies, can you help me delete them?
+
 # Remove sequence number and dot
 final_movies$Title <- gsub("^\\d+\\.\\s*", "", final_movies$Title)
 
@@ -461,6 +464,8 @@ ggplot(final_movies, aes(x = Duration, y = Rating)) +
 
 top1000_turkish_movies_url \<- https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR
 
+Data on the top 1000 Turkish movies was collected.
+
 ```{r}
 # URL for IMDb Top 1000 Turkish movies
 imdb_top_1000_url <- "https://www.imdb.com/search/title/?title_type=feature&groups=top_1000&country_of_origin=TR"
@@ -513,6 +518,8 @@ print(merged_df)
 
 ```
 
+Sorted.
+
 ```{r}
 # Sort by IMDb score
 ranked_movies <- merged_df |> arrange(desc(Rating))
@@ -524,6 +531,8 @@ print(ranked_movies)
 head(ranked_movies, 11)
 
 ```
+
+The average was calculated.
 
 ```{r}
 # Average IMDb score
